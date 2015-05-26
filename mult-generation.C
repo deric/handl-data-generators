@@ -36,10 +36,10 @@ using namespace std;
 #define MAXMU 10    // mean in each dimension is in range [0,MAXMU]
 #define MINMU -10
 #define MINSIGMA 0
-#define MAXSIGMA 20*sqrt(DIM) // standard deviation (to be added on top 
-// of row sum in each dimension is in range [0,MAXSIGMA] 
+#define MAXSIGMA 20*sqrt(DIM) // standard deviation (to be added on top
+// of row sum in each dimension is in range [0,MAXSIGMA]
 #define MAXSIZE 100  // size of each cluster is in range [MINSIZE,MAXSIZE]
-#define MINSIZE 10   
+#define MINSIZE 10
 #define RUNS 10      // number of data sets to be generated
 
 
@@ -86,12 +86,12 @@ void generate_config() {
   number = 0;
   pctr = 0;
 
-  
-  
+
+
   for (int i=0; i<NUM; i++) {
    	size[i] = MINSIZE + (int)ceil(ran0(&idum)*MAXSIZE);
 
-	// Generate mean values 
+	// Generate mean values
 	for (int j=0; j<DIM; j++) {
 	  mean[j] = -MAXMU+ran0(&idum)*(MAXMU-MINMU);
 	  meanmem[i][j] = mean[j];
@@ -103,7 +103,7 @@ void generate_config() {
 	      sigma[j*DIM+l] = square(ran0(&idum));
 	    }
 	    else {
-	      sigma[j*DIM+l] = -square(ran0(&idum))                    ;
+	      sigma[j*DIM+l] = -square(ran0(&idum));
 	    }
 	    sigma[l*DIM+j] = sigma[j*DIM+l];
 	    }
@@ -116,9 +116,9 @@ void generate_config() {
 	    if (l==j) continue;
 	    else a += myabs(sigma[j*DIM+l]);
 	  }
-	 
+
 	  sigma[j*DIM+j] = a+MINSIGMA+square(ran0(&idum))*(MAXSIGMA-MINSIGMA);
-	    
+
 	  sigmamem[i][j] = sigma[j*DIM+j];
 	}
 
@@ -164,14 +164,14 @@ void generate_config() {
 	      break;
 	    }
 	  }
-	  
+
 	  if (found == 1) {
 	    cerr << "Cluster " << i << " invalid" << endl;
 	    i--;
 	    continue;
 	  }
 	}
-	
+
 	number += size[i];
 
 	// Print data to file
@@ -188,7 +188,7 @@ void generate_config() {
 	}
     }
 }
- 
+
 
 double max(double x, double y) {
   if (x < y) return y;
