@@ -1,3 +1,4 @@
+using namespace std;
 #include "random.h"
 
 /* Copyright Numerical Recipes in C */

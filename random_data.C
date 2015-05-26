@@ -4,10 +4,11 @@
 # include <iomanip>
 # include <cmath>
 # include <ctime>
+#include <cstring>
 
 using namespace std;
 
-# include "random_data.H"
+# include "random_data.h"
 
 //******************************************************************************
 

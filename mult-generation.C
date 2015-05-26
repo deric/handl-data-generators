@@ -19,14 +19,15 @@
 */
 
 
-
-#include <fstream.h>
-#include <iostream.h>
-#include <stdio.h>
+using namespace std;
+#include <fstream>
+#include <iostream>
 #include <stdlib.h>
+#include <stdio.h>
 #include "random.h"
 #include "gasdev.h"
 #include "random_data.h"
+#include <cmath>
 
 
 #define DIM 2        // dimensionality of the data
@@ -133,7 +134,7 @@ void generate_config() {
 	points = normal_multivariate(DIM,size[i],r,mean, &idum2);
 
 	// Check for violations and reject cluster if violation occurs
-	int violation = 0;
+	//int violation = 0;
 	if (i > 0) {
 	  int found = 0;
 	  for (int k=0; k<size[i]; k++) {

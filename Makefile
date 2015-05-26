@@ -1,7 +1,7 @@
-CC = g++ -Wno-deprecated 
+CC = g++ -Wno-deprecated -g3
 LD = g++ -Wno-deprecated
 TARGET = mult_generator
-CFLAGS = 
+CFLAGS = -lm
 
 mult_generator : mult-generation.o gasdev.o random.o random_data.o
 	$(LD) $(CFLAGS) -o mult_generator mult-generation.o gasdev.o random.o  random_data.o
@@ -12,9 +12,9 @@ gasdev.o : gasdev.C
 	$(CC) $(CFLAGS) -c gasdev.C
 random.o : random.C
 	$(CC) $(CFLAGS) -c random.C
-random_data.o : random_Data.C
+random_data.o : random_data.C
 	$(CC) $(CFLAGS) -c random_data.C
 
 
-clean: 
+clean:
 	@/bin/rm *.o
