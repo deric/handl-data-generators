@@ -5,7 +5,7 @@
 #define AM (1.0/IM)
 #define IQ 127773
 #define IR 2836
-#define MASK 123459876  
+#define MASK 123459876
 #define RN ran0(&seed)
 
 double ran0(long *idum);
@@ -19,6 +19,6 @@ double ran0(long *idum);
 #undef IQ
 #undef IR
 #undef MASK
-*/
+ */
 
 /* End copyright Numerical Recipes in C */

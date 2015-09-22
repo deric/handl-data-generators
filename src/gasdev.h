@@ -1,4 +1,4 @@
- 
+
 /* Random number generator */
 /* Copyright Numerical Recipes in C */
 
