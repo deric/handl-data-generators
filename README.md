@@ -55,3 +55,4 @@ where all parameters are optional and:
 
   * Julia Handl
   * Joshua Knowles
+  * John Burkardt
