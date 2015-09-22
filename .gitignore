@@ -1,4 +1,6 @@
 mult_generator
 elly
+cure
 *.o
 *.dat
+nbproject/*

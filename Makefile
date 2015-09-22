@@ -4,7 +4,7 @@ TARGET = mult_generator
 CFLAGS = -lm
 SRC = src
 
-all: mult_generator elly
+all: mult_generator elly cure
 
 mult_generator : mult-generation.o gasdev.o random.o random_data.o
 	$(LD) $(CFLAGS) -o mult_generator mult-generation.o gasdev.o random.o random_data.o
@@ -22,6 +22,11 @@ elly : ellipsoid.o
 	$(LD) $(CFLAGS) -o elly ellipsoid.o
 ellipsoid.o : $(SRC)/ellipsoid.C
 	$(CC) $(CFLAGS) -c $(SRC)/ellipsoid.C
+
+cure : cure.o random_data.o random.o
+	  $(LD) $(CFLAGS) -o cure cure.o random.o random_data.o
+cure.o : $(SRC)/cure.C
+	  $(CC) $(CFLAGS) -c $(SRC)/cure.C
 
 clean:
 	@/bin/rm *.o
