@@ -4,3 +4,4 @@
 void usage();
 void gen_data1();
 void llrand();
+double scale(double value, double fromRangeMin, double fromRangeMax, double toRangeMin, double toRangeMax);
