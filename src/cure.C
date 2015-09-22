@@ -105,6 +105,9 @@ int main(int argc, char **argv) {
     cerr << "Data written to " << name << endl;
     out = new ofstream(name);
     switch (type) {
+        case 0:
+            gen_data0();
+            break;
         case 1:
             gen_data1();
             break;
@@ -119,13 +122,12 @@ int main(int argc, char **argv) {
 }
 
 /**
- * Generate 3 circles (a large one and two small ones)
+ * Generate 3 circular clusters
  */
-void gen_data1() {
+void gen_data0() {
     int label = 0;
     int s = (int) seed;
     double val;
-
 
     //use 10% of point to form small circle
     int num_small = (int) npoints * 0.1;
@@ -147,7 +149,7 @@ void gen_data1() {
         *out << label << endl;
     }
 
-    //upper left smaller circle
+    //upper right smaller circle
     label = 1;
     //double gap = (xmax - xmin) * 0.15;
     points = uniform_in_circle01_map(dim, num_small, &s);
@@ -166,17 +168,129 @@ void gen_data1() {
         *out << label << endl;
     }
 
-    //bottom left smaller circle
+    //bottom right smaller circle
     label = 2;
     points = uniform_in_circle01_map(dim, num_small, &s);
     for (int j = 0; j < num_small; j++) {
         for (int k = 0; k < dim; k++) {
-            if (k == 1) { //y dimension
-                val = scale(points[j * dim + k], xmin, xmax, half - 2 * quad, half - quad);
-            } else {
+            if (k == 0) { //x dimension
                 val = scale(points[j * dim + k], xmin, xmax, xmax - quad, xmax);
+            } else {
+                val = scale(points[j * dim + k], xmin, xmax, half - 2 * quad, half - quad);
             }
 
+            *out << val << " ";
+        }
+        *out << label << endl;
+    }
+}
+
+/**
+ * Generate 5 high density clusters (one big circle, 2 small circles and two ellipsoids)
+ */
+void gen_data1() {
+    int label = 0;
+    int s = (int) seed;
+    double val;
+
+    //use 10% of point to form small circle
+    int num_small = (int) npoints * 0.1;
+    int num_ellipse = (int) npoints * 0.15;
+    int num_out = (int) npoints * 0.01;
+    int num_big = npoints - 2 * num_small - 2 * num_ellipse - num_out;
+
+    //big circle - 80% of data points
+    points = uniform_in_circle01_map(dim, num_big, &s);
+    double b_max = xmin + (xmax - xmin) * 0.7;
+    for (int j = 0; j < num_big; j++) {
+        for (int k = 0; k < dim; k++) {
+            val = scale(points[j * dim + k], xmin, xmax, xmin, b_max);
+            *out << val << " ";
+        }
+        *out << label << endl;
+    }
+
+    //upper right smaller circle
+    label = 1;
+    points = uniform_in_circle01_map(dim, num_small, &s);
+    double quad = (b_max - xmin) * 0.12;
+    double half = xmin + (b_max - xmin) / 2;
+    for (int j = 0; j < num_small; j++) {
+        for (int k = 0; k < dim; k++) {
+            if (k == 0) { //x dimension
+                val = scale(points[j * dim + k], xmin, xmax, xmax - quad, xmax);
+            } else {
+                val = scale(points[j * dim + k], xmin, xmax, half + quad, half + 2 * quad);
+            }
+
+            *out << val << " ";
+        }
+        *out << label << endl;
+    }
+
+    //bottom right smaller circle
+    label = 2;
+    points = uniform_in_circle01_map(dim, num_small, &s);
+    for (int j = 0; j < num_small; j++) {
+        for (int k = 0; k < dim; k++) {
+            if (k == 0) { //x dimension
+                val = scale(points[j * dim + k], xmin, xmax, xmax - quad, xmax);
+            } else {
+                val = scale(points[j * dim + k], xmin, xmax, half - 2 * quad, half - quad);
+            }
+
+            *out << val << " ";
+        }
+        *out << label << endl;
+    }
+
+    //ellipsoid
+    double gap = (xmax - xmin) * 0.05;
+    half = xmin + (xmax - xmin) / 2;
+    double e_max = (xmax - xmin) * 0.2;
+    label = 3;
+    points = uniform_in_circle01_map(dim, num_ellipse, &s);
+    for (int j = 0; j < num_ellipse; j++) {
+        for (int k = 0; k < dim; k++) {
+            if (k == 0) { //x dimension
+                val = scale(points[j * dim + k], xmin, xmax, xmin, half - gap);
+            } else {
+                val = scale(points[j * dim + k], xmin, xmax, xmax - e_max, xmax);
+            }
+
+            *out << val << " ";
+        }
+        *out << label << endl;
+    }
+
+    //second ellipsoid
+    label = 4;
+    points = uniform_in_circle01_map(dim, num_ellipse, &s);
+    for (int j = 0; j < num_ellipse; j++) {
+        for (int k = 0; k < dim; k++) {
+            if (k == 0) { //x dimension
+                val = scale(points[j * dim + k], xmin, xmax, half + gap, xmax);
+            } else {
+                val = scale(points[j * dim + k], xmin, xmax, xmax - e_max, xmax);
+            }
+
+            *out << val << " ";
+        }
+        *out << label << endl;
+    }
+
+    //outliers connecting both ellipsoids
+        //second ellipsoid
+    label = 5;
+    for (int j = 0; j < num_out; j++) {
+        for (int k = 0; k < dim; k++) {
+            if (k == 0) { //x dimension
+                //val = d_uniform_01(&s);
+                val = d_random(half - gap, half + gap, &s);
+                //val = scale(val, xmin, xmax, half - gap, half + gap);
+            } else {
+                val = xmax - e_max / 2;
+            }
             *out << val << " ";
         }
         *out << label << endl;

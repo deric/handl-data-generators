@@ -50,9 +50,24 @@ where all parameters are optional and:
   * `<dimension>` is a positive int >= 2
   * `<seed>` is a long int.
 
+## cure
+
+CURE data sets generator. See Guha, Sudipto, Rajeev Rastogi, and Kyuseok Shim. "CURE: an efficient clustering algorithm for
+large databases." ACM SIGMOD Record. Vol. 27. No. 2. ACM, 1998. for more details.
+
+The distribution of data points is just approximated
+
+```
+$ ./cure -n <npoints> [-d <dimension>] [-s <seed>] [-l <x/y min>] [-m <x/y max>] [-t type of data]
+```
+where:
+  * `-l` minimal x/y value
+  * `-m` maximal x/y value
+  * `-t` type of dataset, currently supports values 0-1
 
 ## Authors
 
   * Julia Handl
   * Joshua Knowles
   * John Burkardt
+  * Tomas Barton
