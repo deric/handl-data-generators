@@ -42,6 +42,7 @@ long int seed;
 int dim;
 double xmin;
 double xmax;
+double b_max;
 //output file
 ofstream * out;
 double * points;
@@ -51,7 +52,7 @@ void usage() {
     fprintf(stderr, "Generates square dataset with several geometic shapes\n");
     fprintf(stderr, "by default data are in interval [-1, 1]\n");
     fprintf(stderr, "\nThe command line parameters for this generator are:\n\n");
-    fprintf(stderr, "$ ./cure -n <num points> [-s <seed>] [-l <x/y min>] [-m <x/y max>] [-t type of data]\n\n");
+    fprintf(stderr, "$ ./cure -n <num points> [-s <seed>] [-d <dimension>] [-l <x/y min>] [-m <x/y max>] [-t type of data]\n\n");
 }
 
 int main(int argc, char **argv) {
@@ -104,12 +105,32 @@ int main(int argc, char **argv) {
     sprintf(name, "cure-t%d-%dn-%dD.dat", type, npoints, dim);
     cerr << "Data written to " << name << endl;
     out = new ofstream(name);
+    int num_small;
+    int num_ellipse;
+    int num_out;
+    int num_noise;
     switch (type) {
         case 0:
             gen_data0();
             break;
         case 1:
-            gen_data1();
+            //use 10% of point to form small circle
+            num_small = (int) npoints * 0.1;
+            num_ellipse = (int) npoints * 0.15;
+            num_out = (int) npoints * 0.01;
+            //big circle will contain 49% of data points
+            gen_data1(num_small, num_ellipse, num_out);
+            break;
+        case 2:
+            //use 10% of point to form small circle
+            num_small = (int) npoints * 0.1;
+            num_ellipse = (int) npoints * 0.15;
+            // 5% noise
+            num_noise = npoints * 0.05;
+            num_out = (int) (npoints * 0.01 + num_noise);
+            //big circle will contain 44% of data points
+            gen_data1(num_small, num_ellipse, num_out);
+            gen_data2(num_noise);
             break;
         default:
             cout << "Error, type " << type << " is not supported " << endl;
@@ -135,7 +156,7 @@ void gen_data0() {
 
     //big circle - 80% of data points
     points = uniform_in_circle01_map(dim, num_big, &s);
-    double b_max = xmin + (xmax - xmin) * 0.7;
+    b_max = xmin + (xmax - xmin) * 0.7;
     for (int j = 0; j < num_big; j++) {
         for (int k = 0; k < dim; k++) {
             if (k == 0) {
@@ -148,6 +169,7 @@ void gen_data0() {
         }
         *out << label << endl;
     }
+    delete [] points;
 
     //upper right smaller circle
     label = 1;
@@ -167,6 +189,7 @@ void gen_data0() {
         }
         *out << label << endl;
     }
+    delete [] points;
 
     //bottom right smaller circle
     label = 2;
@@ -183,25 +206,21 @@ void gen_data0() {
         }
         *out << label << endl;
     }
+    delete [] points;
 }
 
 /**
  * Generate 5 high density clusters (one big circle, 2 small circles and two ellipsoids)
  */
-void gen_data1() {
+void gen_data1(int num_small, int num_ellipse, int num_out) {
     int label = 0;
     int s = (int) seed;
     double val;
 
-    //use 10% of point to form small circle
-    int num_small = (int) npoints * 0.1;
-    int num_ellipse = (int) npoints * 0.15;
-    int num_out = (int) npoints * 0.01;
     int num_big = npoints - 2 * num_small - 2 * num_ellipse - num_out;
 
-    //big circle - 80% of data points
     points = uniform_in_circle01_map(dim, num_big, &s);
-    double b_max = xmin + (xmax - xmin) * 0.7;
+    b_max = xmin + (xmax - xmin) * 0.7;
     for (int j = 0; j < num_big; j++) {
         for (int k = 0; k < dim; k++) {
             val = scale(points[j * dim + k], xmin, xmax, xmin, b_max);
@@ -209,6 +228,7 @@ void gen_data1() {
         }
         *out << label << endl;
     }
+    delete [] points;
 
     //upper right smaller circle
     label = 1;
@@ -227,6 +247,7 @@ void gen_data1() {
         }
         *out << label << endl;
     }
+    delete [] points;
 
     //bottom right smaller circle
     label = 2;
@@ -243,6 +264,7 @@ void gen_data1() {
         }
         *out << label << endl;
     }
+    delete [] points;
 
     //ellipsoid
     double gap = (xmax - xmin) * 0.05;
@@ -262,6 +284,7 @@ void gen_data1() {
         }
         *out << label << endl;
     }
+    delete [] points;
 
     //second ellipsoid
     label = 4;
@@ -278,6 +301,7 @@ void gen_data1() {
         }
         *out << label << endl;
     }
+    delete [] points;
 
     //outliers connecting both ellipsoids
         //second ellipsoid
@@ -297,6 +321,69 @@ void gen_data1() {
     }
 }
 
+/**
+* Add sixth cluster to Type 1 dataset containing only noise
+*/
+void gen_data2(int num_noise) {
+    int label = 6;
+    int s = (int) seed;
+    double val;
+    double* vec;
+    int i = 0;
+    vec = new double[dim];
+    while(i < num_noise){
+        dvec_uniform_01(dim, &s, vec);
+        //scale the vector
+        for (int k = 0; k < dim; k++) {
+            vec[k] = scale(vec[k], 0.0, 1.0, xmin, xmax);
+        }
+
+        if(inside_big(vec)){
+            //skip the point
+        }else{
+            //outlier
+            for (int k = 0; k < dim; k++) {
+                val = points[i * dim + k];
+                *out << val << " ";
+            }
+            *out << label << endl;
+            i++;
+        }
+
+    }
+    delete [] vec;
+}
+
 double scale(double value, double fromRangeMin, double fromRangeMax, double toRangeMin, double toRangeMax) {
     return ((value - fromRangeMin) * (toRangeMax - toRangeMin) / (fromRangeMax - fromRangeMin) + toRangeMin);
+}
+
+/**
+* check if points coordinates are inside big circle
+*/
+bool inside_big(double* vec){
+    double total;
+    double tmp;
+    double r;
+    double a;
+    double rsq;
+    int i;
+
+    total = 0.0;
+    r = (b_max - xmin) / 2.0;
+    rsq = r * r;
+    a = b_max - r;
+    //cout << "a: " << a << endl;
+    for (i = 0; i < dim; i++) {
+        tmp = (vec[i] - a);
+        total += (tmp * tmp);
+        //cout << vec[i] << ", ";
+    }
+    //cout << endl;
+    //cout << "total : "  <<" = "<< total << "; " << rsq << endl;
+    if (total <= rsq) {
+
+        return true;
+    }
+    return false;
 }
