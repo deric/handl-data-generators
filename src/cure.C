@@ -365,11 +365,14 @@ bool inside_big(double* vec){
     double r;
     double a;
     double rsq;
+    double delta;
     int i;
 
     total = 0.0;
+    //neighbourhood without points
+    delta = (xmax - xmin) * 0.02;
     r = (b_max - xmin) / 2.0;
-    rsq = r * r;
+    rsq = r * r + delta;
     a = b_max - r;
     //cout << "a: " << a << endl;
     for (i = 0; i < dim; i++) {
