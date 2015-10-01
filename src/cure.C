@@ -327,7 +327,6 @@ void gen_data1(int num_small, int num_ellipse, int num_out) {
 void gen_data2(int num_noise) {
     int label = 6;
     int s = (int) seed;
-    double val;
     double* vec;
     int i = 0;
     vec = new double[dim];
@@ -343,8 +342,7 @@ void gen_data2(int num_noise) {
         }else{
             //outlier
             for (int k = 0; k < dim; k++) {
-                val = points[i * dim + k];
-                *out << val << " ";
+                *out << vec[k] << " ";
             }
             *out << label << endl;
             i++;
@@ -382,7 +380,6 @@ bool inside_big(double* vec){
     //cout << endl;
     //cout << "total : "  <<" = "<< total << "; " << rsq << endl;
     if (total <= rsq) {
-
         return true;
     }
     return false;
