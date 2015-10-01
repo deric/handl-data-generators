@@ -38,6 +38,8 @@ simply run:
 $ ./mult_generator
 ```
 
+![mult_generator](https://raw.githubusercontent.com/deric/handl-data-generators/screens/img/2d-4c-no9.png)
+
 ## elly
 
 Ellipsoid generator
@@ -49,6 +51,9 @@ where all parameters are optional and:
   * `<nclust>` is a positive int >= 2
   * `<dimension>` is a positive int >= 2
   * `<seed>` is a long int.
+
+
+![elly example](https://raw.githubusercontent.com/deric/handl-data-generators/screens/img/elly-2d10c13s.png)
 
 ## cure
 
@@ -64,6 +69,10 @@ where:
   * `-l` minimal x/y value
   * `-m` maximal x/y value
   * `-t` type of dataset, currently supports values 0-1
+
+![cure t0](https://raw.githubusercontent.com/deric/handl-data-generators/screens/img/cure-t0-2k-2d.png)
+
+![cure t1](https://raw.githubusercontent.com/deric/handl-data-generators/screens/img/cure-t1-2k-2d.png)
 
 ## Authors
 
