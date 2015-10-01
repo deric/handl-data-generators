@@ -1,6 +1,13 @@
 #!/bin/bash
 # first argument is type of dataset we're going to generate
-SIZE=2000
+E_BADARGS=65
+
+if [ $# -ne 2 ]
+then
+    echo "Usage: `basename $0` {type of dataset} {size}"
+    exit $E_BADARGS
+fi
+SIZE=$2
 TYPE=$1
 FILE="cure-t${TYPE}-${SIZE}n-2D.arff"
 make cure
