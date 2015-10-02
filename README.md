@@ -68,11 +68,13 @@ $ ./cure -n <npoints> [-d <dimension>] [-s <seed>] [-l <x/y min>] [-m <x/y max>]
 where:
   * `-l` minimal x/y value
   * `-m` maximal x/y value
-  * `-t` type of dataset, currently supports values 0-1
+  * `-t` type of dataset, currently supports values 0-2
 
 ![cure t0](https://raw.githubusercontent.com/deric/handl-data-generators/screens/img/cure-t0-2k-2d.png)
 
 ![cure t1](https://raw.githubusercontent.com/deric/handl-data-generators/screens/img/cure-t1-2k-2d.png)
+
+![cure t2](https://raw.githubusercontent.com/deric/handl-data-generators/screens/img/cure-t2-4k.png)
 
 ## Authors
 
