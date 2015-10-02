@@ -40,12 +40,20 @@ using namespace std;
 int npoints;
 long int seed;
 int dim;
-double xmin;
-double xmax;
-double b_max;
 //output file
 ofstream * out;
 double * points;
+
+//===============
+// derived values
+double xmin;
+double xmax;
+//uppper bounds of big circle
+double b_max;
+double quad;
+double half;
+double gap;
+double e_max;
 
 void usage() {
     fprintf(stderr, "===== CURE data generator\n");
@@ -233,8 +241,8 @@ void gen_data1(int num_small, int num_ellipse, int num_out) {
     //upper right smaller circle
     label = 1;
     points = uniform_in_circle01_map(dim, num_small, &s);
-    double quad = (b_max - xmin) * 0.12;
-    double half = xmin + (b_max - xmin) / 2;
+    quad = (b_max - xmin) * 0.12;
+    half = xmin + (b_max - xmin) / 2;
     for (int j = 0; j < num_small; j++) {
         for (int k = 0; k < dim; k++) {
             if (k == 0) { //x dimension
@@ -267,9 +275,9 @@ void gen_data1(int num_small, int num_ellipse, int num_out) {
     delete [] points;
 
     //ellipsoid
-    double gap = (xmax - xmin) * 0.05;
+    gap = (xmax - xmin) * 0.05;
     half = xmin + (xmax - xmin) / 2;
-    double e_max = (xmax - xmin) * 0.2;
+    e_max = (xmax - xmin) * 0.2;
     label = 3;
     points = uniform_in_circle01_map(dim, num_ellipse, &s);
     for (int j = 0; j < num_ellipse; j++) {
@@ -330,6 +338,19 @@ void gen_data2(int num_noise) {
     double* vec;
     int i = 0;
     vec = new double[dim];
+    double delta, e1xoffset, e2xoffset, abshalf, a, sm1_off, sm2_off, hf;
+    double sm_delta = (xmax - xmin) * 0.005;
+    //neighbourhood around cluster without points
+    delta = (xmax - xmin) * 0.02;
+
+    abshalf = (xmax - xmin) / 2.0;
+    a = (abshalf - gap) / 2.0;
+    e1xoffset = half - gap - a;
+    e2xoffset = half + gap + a;
+    hf = xmin + (b_max - xmin) / 2;
+    sm1_off = hf + quad;
+    sm2_off = hf - 2 * quad;
+    double lval = xmax - e_max / 2;
     while(i < num_noise){
         dvec_uniform_01(dim, &s, vec);
         //scale the vector
@@ -337,10 +358,20 @@ void gen_data2(int num_noise) {
             vec[k] = scale(vec[k], 0.0, 1.0, xmin, xmax);
         }
 
-        if(inside_big(vec)){
+        if(inside_big(vec, delta)){
+            //skip the point
+        }else if (inside_elly(vec, e1xoffset, delta)){
+            //skip the point
+        }else if (inside_elly(vec, e2xoffset, delta)){
+            //skip the point
+        }else if (inside_small(vec, sm1_off, sm_delta)){
+            //skip the point
+        }else if (inside_small(vec, sm2_off, sm_delta)){
+            //skip the point
+        }else if (on_line(vec, lval, delta)){
             //skip the point
         }else{
-            //outlier
+            //create outlier
             for (int k = 0; k < dim; k++) {
                 *out << vec[k] << " ";
             }
@@ -359,31 +390,84 @@ double scale(double value, double fromRangeMin, double fromRangeMax, double toRa
 /**
 * check if points coordinates are inside big circle
 */
-bool inside_big(double* vec){
-    double total;
-    double tmp;
-    double r;
-    double a;
-    double rsq;
-    double delta;
+bool inside_big(double* vec, double delta){
+    double total, tmp, r, a, rsq;
     int i;
 
     total = 0.0;
-    //neighbourhood without points
-    delta = (xmax - xmin) * 0.02;
     r = (b_max - xmin) / 2.0;
     rsq = r * r + delta;
     a = b_max - r;
-    //cout << "a: " << a << endl;
     for (i = 0; i < dim; i++) {
         tmp = (vec[i] - a);
-        total += (tmp * tmp);
-        //cout << vec[i] << ", ";
+        total += tmp * tmp;
     }
-    //cout << endl;
-    //cout << "total : "  <<" = "<< total << "; " << rsq << endl;
     if (total <= rsq) {
         return true;
+    }
+    return false;
+}
+
+/**
+* check if points coordinates are inside ellipsoid
+*/
+bool inside_elly(double* vec, double xoffset, double delta){
+    double total, tmp, a, b, yoffset, abshalf;
+    int i;
+
+    //x: [xmin, half - gap]
+    //y: [xmax - e_max, xmax]
+    total = 0.0;
+    //half size of are we paint
+    abshalf = (xmax - xmin) / 2.0;
+    a = (abshalf - gap) / 2.0;
+    //TODO: this might not work with shift
+    b = e_max / 2.0;
+    yoffset = abshalf - b;
+    a += delta;
+    b += delta;
+    for (i = 0; i < dim; i++) {
+        if(i == 0){
+            tmp = (vec[i] - xoffset) / a;
+        }else {
+            tmp = (vec[i] - yoffset) / b;
+        }
+        total += tmp * tmp;
+    }
+    if (total <= 1.0) {
+        return true;
+    }
+    return false;
+}
+
+bool inside_small(double* vec, double yoffset, double delta){
+    double total, tmp, r, rsq, xoffset;
+    int i;
+    //x: [xmax - quad, xmax]
+    //y: [half + quad, half + 2 * quad]
+    total = 0.0;
+    r = quad / 2.0;
+    rsq = r * r + delta;
+    xoffset = xmax - r;
+    for (i = 0; i < dim; i++) {
+        if(i == 0){
+            tmp = (vec[i] - xoffset);
+        }else {
+            tmp = (vec[i] - yoffset -r);
+        }
+        total += tmp * tmp;
+    }
+    if (total <= rsq) {
+        return true;
+    }
+    return false;
+}
+
+bool on_line(double* vec, double yval, double delta){
+    if(vec[0] > (half - gap) && vec[0] < (half + gap)){
+        if(vec[1] > (yval - delta) && vec[1] < (yval + delta)){
+            return true;
+        }
     }
     return false;
 }
