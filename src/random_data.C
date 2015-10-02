@@ -1033,7 +1033,6 @@ unsigned long get_seed(void)
 {
 #define UNSIGNED_LONG_MAX 4294967295UL
     time_t clock;
-    int i;
     int hours;
     int minutes;
     int seconds;
@@ -1243,7 +1242,6 @@ int grid_side(int m, int n)
 //
 {
     double exponent;
-    int n_grid;
     int n_side;
 
     if (n <= 0) {
@@ -1350,7 +1348,6 @@ double *halton_in_circle01_accept(int m, int n, int *seed)
     int base[M];
     int have;
     int i;
-    int j;
     int leap[M];
     int seed_vec[M];
     int step;
@@ -1434,7 +1431,6 @@ double *halton_in_circle01_map(int m, int n, int *seed)
     int j;
     int leap[1];
     double *r;
-    double rval;
     int step;
     int seed_vec[1];
     double *t;
@@ -1733,7 +1729,6 @@ bool halton_step_check(int step)
 //
 //    Output, bool HALTON_STEP_CHECK.
 {
-    int i;
     bool value;
 
     if (step < 0) {
@@ -4316,8 +4311,6 @@ double *uniform_in_cube01(int m, int n, int *seed)
 //    Output, double UNIFORM_IN_CUBE01[M*N], the points.
 //
 {
-    int i;
-    int j;
     double *x;
 
     x = new double[m * n];
@@ -4911,7 +4904,6 @@ double *uniform_in_triangle_map1(double v1[2], double v2[2], double v3[2],
     int i;
     int j;
     double r[M];
-    double total;
     double *x;
 
     x = new double[M * n];
@@ -4982,7 +4974,6 @@ double *uniform_in_triangle_map2(double v1[2], double v2[2], double v3[2],
     int i;
     int j;
     double r[M];
-    double total;
     double *x;
     //
     x = new double[M * n];
@@ -5211,7 +5202,6 @@ double *uniform_on_simplex01_map(int m, int n, int *seed)
     int j;
     double r;
     double total;
-    double u;
     double *x;
     //
     //  The construction begins by sampling M points from the
@@ -5440,8 +5430,6 @@ void write_data(int ndim, int n, double r[], char *file_out_name,
     ofstream file_out;
     int i;
     int j;
-    int mhi;
-    int mlo;
     char *s;
 
     file_out.open(file_out_name);
