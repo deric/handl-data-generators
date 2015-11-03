@@ -12,8 +12,11 @@ SIZE=$3
 TYPE=$2
 FILE="${SET}-t${TYPE}-${SIZE}n.arff"
 make
-
-./"${SET}" -n $SIZE -t $TYPE
+if [[ "${SET}" == "disk" ]]; then
+  ./"${SET}" -n $SIZE -t $TYPE -b 0.2 -g 0.04
+else
+  ./"${SET}" -n $SIZE -t $TYPE
+fi
 DATA="${SET}-t${TYPE}-${SIZE}n.dat"
 if [[ ! -f $DATA ]]; then
   echo "data set ${DATA} was not found"

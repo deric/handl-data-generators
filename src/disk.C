@@ -27,7 +27,7 @@ void usage() {
     fprintf(stderr, "Generates two circles, one inside another\n");
     fprintf(stderr, "by default data are in interval [-10, 10]\n");
     fprintf(stderr, "\nThe command line parameters for this generator are:\n\n");
-    fprintf(stderr, "$ ./disk -n <num points> [-s <seed>] [-d <dimension>] [-l <x/y min>] [-m <x/y max>] [-t type of data] [-r inner radius]\n\n");
+    fprintf(stderr, "$ ./disk -n <num points> [-s <seed>] [-d <dimension>] [-l <x/y min>] [-m <x/y max>] [-t type of data] [-r inner radius] [-b ratio of inner items]\n\n");
 }
 
 int main(int argc, char **argv) {
@@ -37,6 +37,8 @@ int main(int argc, char **argv) {
     xmin = -10.0;
     xmax = 10.0;
     double r = 0.5;
+    double b = 0.5;
+    double gap = 0.1;
     //std::random_device rd;
     //std::mt19937 gen(rd());
     //std::uniform_int_distribution<unsigned long long> dis(lowerBorder, upperBorder);
@@ -67,6 +69,10 @@ int main(int argc, char **argv) {
             xmax = atof(argv[i + 1]);
         } else if (strcmp("-r", argv[i]) == 0) {
             r = atof(argv[i + 1]);
+        } else if (strcmp("-b", argv[i]) == 0) {
+            b = atof(argv[i + 1]);
+        } else if (strcmp("-g", argv[i]) == 0) {
+            gap = atof(argv[i + 1]);
         } else {
             fprintf(stderr, "Unrecognized parameter sequence.\n$ ./disk -h\nfor help.\n");
             exit(1);
@@ -87,9 +93,9 @@ int main(int argc, char **argv) {
     int num_outer;
     switch (type) {
         case 0:
-            num_inner = (int) npoints * 0.5;
+            num_inner = (int) npoints * b;
             num_outer = npoints - num_inner;
-            gen_data0(num_inner, num_outer, r);
+            gen_data0(num_inner, num_outer, r, gap);
             break;
         default:
             cout << "Error, type " << type << " is not supported " << endl;
@@ -105,16 +111,30 @@ int main(int argc, char **argv) {
  * Generate disk-in-disk
  * r - inner radius of an annulus (outer radius is 1.0)
  */
-void gen_data0(int num_inner, int num_outer, double r) {
+void gen_data0(int num_inner, int num_outer, double r, double gap) {
   int label = 0;
   double * points;
   double val;
   int s = (int) seed;
+  double sc = 1.0 - r - gap;
+  double min = sc * xmin;
+  double max = sc * xmax;
 
   points = uniform_in_annulus01_accept(dim, num_outer, r, &s);
   for (int j = 0; j < num_outer; j++) {
     for (int k = 0; k < dim; k++) {
       val = scale(points[j * dim + k], -1.0, 1.0, xmin, xmax);
+      *out << val << " ";
+    }
+    *out << label << endl;
+  }
+  delete [] points;
+
+  label = 1;
+  points = uniform_in_circle01_map(dim, num_inner, &s);
+  for (int j = 0; j < num_inner; j++) {
+    for (int k = 0; k < dim; k++) {
+      val = scale(points[j * dim + k], -1.0, 1.0, min, max);
       *out << val << " ";
     }
     *out << label << endl;
