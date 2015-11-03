@@ -76,6 +76,13 @@ where:
 
 ![cure t2](https://raw.githubusercontent.com/deric/handl-data-generators/screens/img/cure-t2-4k.png)
 
+## disk
+
+Disk in disk dataset are two clusters formed by a circle and an annulus around it.
+
+
+![disk-4600](https://raw.githubusercontent.com/deric/handl-data-generators/screens/img/disk-4600.png)
+
 ## Authors
 
   * Julia Handl

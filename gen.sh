@@ -13,7 +13,7 @@ TYPE=$2
 FILE="${SET}-t${TYPE}-${SIZE}n.arff"
 make
 if [[ "${SET}" == "disk" ]]; then
-  ./"${SET}" -n $SIZE -t $TYPE -b 0.2 -g 0.04
+  ./"${SET}" -n $SIZE -t $TYPE -b 0.1 -g 0.03
 else
   ./"${SET}" -n $SIZE -t $TYPE
 fi
@@ -29,7 +29,7 @@ cat <<EOF > "/tmp/out"
 
 @ATTRIBUTE x REAL
 @ATTRIBUTE y REAL
-@ATTRIBUTE class {0,1,2}
+@ATTRIBUTE class {0,1}
 
 @DATA
 EOF
