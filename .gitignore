@@ -2,6 +2,7 @@ mult_generator
 elly
 cure
 disk
+impossible
 *.o
 *.dat
 nbproject/*

@@ -4,7 +4,7 @@ TARGET = mult_generator
 CFLAGS = -lm
 SRC = src
 
-all: mult_generator elly cure disk
+all: mult_generator elly cure disk impossible
 
 mult_generator : mult-generation.o gasdev.o random.o random_data.o
 	$(LD) $(CFLAGS) -o mult_generator mult-generation.o gasdev.o random.o random_data.o
@@ -31,6 +31,10 @@ disk : disk.o random_data.o random.o
 	  $(LD) $(CFLAGS) -o disk disk.o random.o random_data.o
 disk.o : $(SRC)/disk.C
 	  $(CC) $(CFLAGS) -c $(SRC)/disk.C
+impossible : impossible.o random_data.o random.o
+	  $(LD) $(CFLAGS) -o impossible impossible.o random.o random_data.o
+impossible.o : $(SRC)/impossible.C
+	  $(CC) $(CFLAGS) -c $(SRC)/impossible.C
 
 clean:
 	@/bin/rm *.o
