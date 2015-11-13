@@ -5,4 +5,10 @@ set xlabel "x"
 
 set terminal pngcairo size 800,600 enhanced font 'Verdana,10'
 set output "chart.png"
-plot "impossible-4000n.dat" using 1:2 with points
+#plot "impossible-4000n.dat" using 1:2 with points
+plot "< awk -F\" \" '{if($3 == \"0\") print}' impossible-4000n.dat" u 1:2  t "0" w p pt 7,\
+"< awk -F\" \" '{if($3 == \"1\") print}' impossible-4000n.dat" u 1:2  t "1" w p pt 5,\
+"< awk -F\" \" '{if($3 == \"2\") print}' impossible-4000n.dat" u 1:2  t "2" w p pt 13,\
+"< awk -F\" \" '{if($3 == \"3\") print}' impossible-4000n.dat" u 1:2  t "3" w p pt 22,\
+"< awk -F\" \" '{if($3 == \"4\") print}' impossible-4000n.dat" u 1:2  t "4" w p pt 9,\
+"< awk -F\" \" '{if($3 == \"5\") print}' impossible-4000n.dat" u 1:2  t "5" w p pt 18

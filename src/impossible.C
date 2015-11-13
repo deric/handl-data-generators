@@ -165,14 +165,15 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
   cy = (half[1] + xmax) / 2;
   int num_spiral = num_quad / 2;
 
-  draw_spiral(num_spiral, cx, cy, 4, 0.8 * cr, 0.0, 0.33, 0.07, 1);
+  draw_spiral(num_spiral, cx, cy, 4, 0.9 * cr, 0.0, 0.2, 0.07, 1, 1);
+  draw_spiral(num_spiral, cx-0.35, cy-0.35, 5, 0.9 * cr, -1.9, 0.9, 0.0698, 0, -1);
   //draw_spiral(num_spiral, cx - 0.3, cy - 0.4, 5, 0.8 * cr, 0.2, 0.5, -0.07, 0);
 
 
   delete[] half;
 }
 
-void draw_spiral(int num_spiral, double cx, double cy, int label, double cr, double a, double b, double c, int p){
+void draw_spiral(int num_spiral, double cx, double cy, int label, double cr, double a, double b, double c, int p, int q){
   double angle;
   double smin = 0;
   double smax = 0;
@@ -180,7 +181,7 @@ void draw_spiral(int num_spiral, double cx, double cy, int label, double cr, dou
   double val;
   for(int i = 0; i < num_spiral; i++){
     for (int k = 0; k < dim; k++) {
-      angle = c * i;
+      angle = c * i *q;
       if(k == p){
         val = (a + b * angle)*sin(angle)/3;
         //val = scale(val, -230, 230, cy - cr, cy + cr);
