@@ -12,14 +12,20 @@ re='^[0-9]+$'
 if ! [[ $SIZE =~ $re ]] ; then
   echo "error: given size is not a number" >&2; exit 1
 fi
+PWD="$(pwd)"
 CMD="impossible"
+if [[ ! -f "$PWD/$CMD" ]]; then
+  echo "$PWD/$CMD does not exist"
+  exit 1
+fi
+
 NAME="impossible-${SIZE}n"
 FILE="${NAME}.arff"
 DATA="${NAME}.dat"
 make
 EXEC="./${CMD} -n $SIZE -b 0.1"
 echo "cmd: $EXEC"
-`${EXEC}`
+bash -c "${EXEC}"
 if [[ ! -f $DATA ]]; then
   echo "data set ${DATA} was not found"
   exit 1
@@ -30,7 +36,7 @@ cat <<EOF > "/tmp/out"
 % generated dataset with the `impossible` generator
 % using:
 %
-%  $ ${EXEC}
+%  $EXEC
 %
 @RELATION $NAME
 

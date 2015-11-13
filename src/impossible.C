@@ -157,7 +157,7 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
   }
   delete[] points;
 
-
+  label = 1;
   double amin = xmin * 0.8;
   double amax = xmax * 0.8;
 
@@ -166,11 +166,10 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
   for (int j = 0; j < num_quad; j++) {
     for (int k = 0; k < dim; k++) {
       if(k == 1){
-        val = scale(points[j * dim + k], -1.0, 1.0, half[k], xmax);
+        val = scale(points[j * dim + k], -1.0, 1.0, half[k], amax);
       }else {
-        val = scale(points[j * dim + k], -1.0, 1.0, xmin, half[k]);
+        val = scale(points[j * dim + k], -1.0, 1.0, amin, half[k]);
       }
-      val = scale(points[j * dim + k], -1.0, 1.0, amin, amax);
       *out << val << " ";
     }
     *out << label << endl;
