@@ -165,8 +165,12 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
   cy = (half[1] + xmax) / 2;
   int num_spiral = num_quad / 2;
 
-  draw_spiral(num_spiral, cx, cy, 4, 0.9 * cr, 0.0, 0.2, 0.07, 1, 1);
-  draw_spiral(num_spiral, cx-0.35, cy-0.35, 5, 0.9 * cr, -1.9, 0.9, 0.0698, 0, -1);
+  // spirals that are very close
+  //draw_spiral(num_spiral, cx, cy, 4, 0.9 * cr, 0.0, 0.2, 0.07, 1, 1);
+  //draw_spiral(num_spiral, cx-0.35, cy-0.35, 5, 0.9 * cr, -1.9, 0.9, 0.0698, 0, -1);
+
+  draw_spiral(num_spiral, cx, cy, 4, 0.8 * cr, 0.0, 0.2, 0.03, 1, 1);
+  draw_spiral(num_spiral, cx-0.5, cy-0.6, 5, 0.8 * cr, -0.5, 0.4, 0.025, 0, -1);
   //draw_spiral(num_spiral, cx - 0.3, cy - 0.4, 5, 0.8 * cr, 0.2, 0.5, -0.07, 0);
 
 
