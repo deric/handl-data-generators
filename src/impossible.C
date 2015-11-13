@@ -150,7 +150,6 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
   delete[] points;
 
   //3 circles inside each other
-  label = 1;
   int c1 = (int) num_quad * 0.5;
   int c2 = (int) num_quad * 0.3;
   double cr = (half[0] - xmin) / 2;
@@ -161,11 +160,61 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
   draw_circle(c2, cx, cy, half, 2, 0.5 * cr);
   draw_circle(num_quad - c1 - c2, cx, cy, half, 3, 0.2 * cr);
 
+  //spirals
+  cx =  (half[0] + xmax) / 2;
+  cy = (half[1] + xmax) / 2;
+  int num_spiral = num_quad / 2;
+
+  draw_spiral(num_spiral, cx, cy, 4, 0.8 * cr, 0.0, 0.33, 0.07, 1);
+  //draw_spiral(num_spiral, cx - 0.3, cy - 0.4, 5, 0.8 * cr, 0.2, 0.5, -0.07, 0);
+
+
   delete[] half;
 }
 
+void draw_spiral(int num_spiral, double cx, double cy, int label, double cr, double a, double b, double c, int p){
+  double angle;
+  double smin = 0;
+  double smax = 0;
+  double* points = new double[num_spiral * dim];
+  double val;
+  for(int i = 0; i < num_spiral; i++){
+    for (int k = 0; k < dim; k++) {
+      angle = c * i;
+      if(k == p){
+        val = (a + b * angle)*sin(angle)/3;
+        //val = scale(val, -230, 230, cy - cr, cy + cr);
+      }else {
+        val = (a + b * angle)*cos(angle)/3;
+        //val = scale(val, -230, 230, cx - cr, cx + cr);
+      }
+      if(val < smin){
+        smin = val;
+      }
+      if(val > smax){
+        smax = val;
+      }
+      points[k + i * dim] = val;
+    }
+  }
+  cout << "min = "<< smin << ", max = " << smax << endl;
+
+  for (int j = 0; j < num_spiral; j++) {
+    for (int k = 0; k < dim; k++) {
+      if(k == 1){
+        val = scale(points[j * dim + k], smin, smax, cy - cr, cy + cr);
+      }else {
+        val = scale(points[j * dim + k], smin, smax, cx - cr, cx + cr);
+      }
+      *out << val << " ";
+    }
+    *out << label << endl;
+  }
+  delete [] points;
+}
+
+
 void draw_circle(int num_pts, double cx, double cy, double* half, int label, double r){
-  cout << "x = " << cx << ", y = " << cy << ", r = " << r << endl;
   double * points;
   double val;
   int s = (int) seed;
