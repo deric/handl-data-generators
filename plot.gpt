@@ -1,0 +1,8 @@
+set size square
+
+set ylabel "y"
+set xlabel "x"
+
+set terminal pngcairo size 800,600 enhanced font 'Verdana,10'
+set output "chart.png"
+plot "impossible-4000n.dat" using 1:2 with points

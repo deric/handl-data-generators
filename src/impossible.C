@@ -135,14 +135,6 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
     }
   }
 
-  for (int k = 0; k < dim; k++) {
-    cout << "gaussian dim "<< k <<": [" << gmin[k] << ", " << gmax[k] << "] " << endl;
-    if(k == 1){
-      cout << "scaling to: " << half[k] << ", " << xmax << endl;
-    }else {
-      cout << "scaling to: " << xmin << ", " << half[k] << endl;
-    }
-  }
   //write scaled gaussian to upper left corner
   for (int j = 0; j < num_quad; j++) {
     for (int k = 0; k < dim; k++) {
@@ -157,29 +149,39 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
   }
   delete[] points;
 
-  label = 1;
-  double amin = xmin * 0.8;
-  double amax = xmax * 0.8;
-
   //3 circles inside each other
-  points = uniform_in_annulus01_accept(dim, num_quad, 0.9, &s);
-  for (int j = 0; j < num_quad; j++) {
+  label = 1;
+  int c1 = (int) num_quad * 0.5;
+  int c2 = (int) num_quad * 0.3;
+  double cr = (half[0] - xmin) / 2;
+  double cx = (half[0] - xmin) / 2;
+  double cy = (half[1] - xmax) / 2;
+
+  draw_circle(c1, cx, cy, half, 1, 0.8 * cr);
+  draw_circle(c2, cx, cy, half, 2, 0.5 * cr);
+  draw_circle(num_quad - c1 - c2, cx, cy, half, 3, 0.2 * cr);
+
+  delete[] half;
+}
+
+void draw_circle(int num_pts, double cx, double cy, double* half, int label, double r){
+  cout << "x = " << cx << ", y = " << cy << ", r = " << r << endl;
+  double * points;
+  double val;
+  int s = (int) seed;
+  points = uniform_in_annulus01_accept(dim, num_pts, 0.9, &s);
+  for (int j = 0; j < num_pts; j++) {
     for (int k = 0; k < dim; k++) {
       if(k == 1){
-        val = scale(points[j * dim + k], -1.0, 1.0, half[k], amax);
+        val = scale(points[j * dim + k], -1.0, 1.0, cy - r, cy + r);
       }else {
-        val = scale(points[j * dim + k], -1.0, 1.0, amin, half[k]);
+        val = scale(points[j * dim + k], -1.0, 1.0, cx - r, cx + r);
       }
       *out << val << " ";
     }
     *out << label << endl;
   }
   delete [] points;
-
-
-
-
-  delete[] half;
 }
 
 double scale(double value, double fromRangeMin, double fromRangeMax, double toRangeMin, double toRangeMax) {

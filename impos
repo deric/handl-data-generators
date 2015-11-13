@@ -24,7 +24,6 @@ FILE="${NAME}.arff"
 DATA="${NAME}.dat"
 make
 EXEC="./${CMD} -n $SIZE -b 0.1"
-echo "cmd: $EXEC"
 bash -c "${EXEC}"
 if [[ ! -f $DATA ]]; then
   echo "data set ${DATA} was not found"
@@ -33,7 +32,7 @@ fi
 tab2csv $DATA $FILE
 
 cat <<EOF > "/tmp/out"
-% generated dataset with the `impossible` generator
+% generated dataset with the 'impossible' generator
 % using:
 %
 %  $EXEC

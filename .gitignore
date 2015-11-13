@@ -3,6 +3,7 @@ elly
 cure
 disk
 impossible
+*.png
 *.o
 *.dat
 nbproject/*
