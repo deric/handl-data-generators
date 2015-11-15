@@ -6,3 +6,7 @@ double scale(double value, double fromRangeMin, double fromRangeMax, double toRa
 
 void draw_circle(int num_pts, double amin, double amax, double* half, int label, double cr);
 void draw_spiral(int num_pts, double cx, double cy, int label, double cr, double a, double b, double c, int p, int q );
+
+void draw_elly(int num_pts, double cx, double cy, int label, double cr, double xmin, double* half);
+
+double Eucdist(double *a, double *b);

@@ -11,4 +11,5 @@ plot "< awk -F\" \" '{if($3 == \"0\") print}' impossible-4000n.dat" u 1:2  t "0"
 "< awk -F\" \" '{if($3 == \"2\") print}' impossible-4000n.dat" u 1:2  t "2" w p pt 13,\
 "< awk -F\" \" '{if($3 == \"3\") print}' impossible-4000n.dat" u 1:2  t "3" w p pt 22,\
 "< awk -F\" \" '{if($3 == \"4\") print}' impossible-4000n.dat" u 1:2  t "4" w p pt 9,\
-"< awk -F\" \" '{if($3 == \"5\") print}' impossible-4000n.dat" u 1:2  t "5" w p pt 18
+"< awk -F\" \" '{if($3 == \"5\") print}' impossible-4000n.dat" u 1:2  t "5" w p pt 18,\
+"< awk -F\" \" '{if($3 == \"6\") print}' impossible-4000n.dat" u 1:2  t "6" w p pt 15

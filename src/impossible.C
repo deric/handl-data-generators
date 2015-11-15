@@ -11,6 +11,24 @@ using namespace std;
 #include "random.h"
 #include "impossible.h"
 
+/* Random number stuff */
+#define RN ran0(&seed)
+#define GN gaussian(&seed)
+
+/* Random number generator */
+/* Copyright Numerical Recipes in C */
+#define IA 16807
+#define IM 2147483647
+#define AM (1.0/IM)
+#define IQ 127773
+#define IR 2836
+#define NTAB 32
+#define NDIV (1+(IM-1)/NTAB)
+#define EPS 1.2e-14
+#define RNMX (1.0-EPS)
+#define MASK 123459876
+
+double gaussian(long *idum);
 
 int npoints;
 long int seed;
@@ -173,8 +191,111 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
   draw_spiral(num_spiral, cx-0.5, cy-0.6, 5, 0.8 * cr, -0.5, 0.4, 0.025, 0, -1);
   //draw_spiral(num_spiral, cx - 0.3, cy - 0.4, 5, 0.8 * cr, 0.2, 0.5, -0.07, 0);
 
+  cx =  (xmin + half[0]) / 2;
+  cy = (xmin + half[1]) / 2;
+ // draw_circle(num_quad, cx, cy, half, 6, cr);
+  draw_elly(num_quad, cx, cy, 6, cr, xmin, half);
 
   delete[] half;
+}
+
+void draw_elly(int length, double cx, double cy, int label, double cr, double xmin, double* half){
+  int i, j;
+  double sum;
+  double *cart;
+  double *gauss;
+  double *origin;
+  double *sph;
+  cart = (double *) malloc(dim * sizeof (double));
+  gauss = (double *) malloc(dim * sizeof (double));
+  origin = (double *) malloc(dim * sizeof (double));
+  sph = (double *) malloc(dim * sizeof (double));
+  double* foc = (double *) malloc(dim * sizeof (double));
+  // 1 - sumdist, where sumdist is the maximum allowed sum of the two distances between a point and the two foci. (This relates to the eccentricity of the cluster, hence the name)
+  double ecc = 0.05 + (RN * 0.1);
+  double* points = new double[length * dim];
+  double* gmin = new double[dim];
+  double* gmax = new double[dim];
+
+  // first generate the second on a unit hypersphere around the origin to get a random orientation
+  sum = 0.0;
+  for (j = 0; j < dim; j++) {
+    origin[j] = 0.0;
+    gauss[j] = GN;
+    if (RN < 0.5){
+      gauss[j] *= -1;
+    }
+    sum += gauss[j] * gauss[j];
+  }
+  for (j = 0; j < dim; j++){
+    foc[j] = (1.0 / sqrt(sum)) * gauss[j] * length;
+  }
+
+
+  // then, generate the points a Gaussian distributed distance in a random direction away from a
+  // uniformly random point somewhere along the major axis of the ellipsoid between the foci. Accept
+  // the point if it is within the ellipsoid.
+  i = 0;
+  bool success = true;
+  while (i < length) {
+      double ax = RN;
+      double rad = GN;
+      sum = 0.0;
+
+      if (success) {
+          for (j = 0; j < dim; j++) {
+              gauss[j] = GN;
+              sum += gauss[j] * gauss[j];
+          }
+          for (j = 0; j < dim; j++) {
+              sph[j] = (1.0 / sqrt(sum)) * gauss[j];
+              //  printf("%g ", sph[j]);
+          }
+      }
+      // printf("\n");
+
+      for (j = 0; j < dim; j++) {
+          cart[j] = ax * foc[j] + sph[j] * rad * ecc * length * 2; // the Cartesian coordinates of the point
+          // printf("%g ", cart[j]);
+      }
+
+      double diff;
+
+      // is the point inside the ellipsoid ?
+      if ((diff = ((Eucdist(cart, origin) + Eucdist(cart, foc)) - (1.0 + ecc) * length)) < 0) {
+          //  if(RN< diff/(ecc*(-length)))
+          //    {
+          for (j = 0; j < dim; j++) {
+              // printf("%g ", cart[j]);
+              //datitem[i][j] = cart[j];
+              //*out << cart[j] << " ";
+              points[j + i * dim] = cart[j];
+              if(cart[j] < gmin[j]){
+                gmin[j] = cart[j];
+              }
+              if(cart[j] > gmax[j]){
+                gmax[j] = cart[j];
+              }
+          }
+          //*out << label << endl;
+          //  printf("\n");
+          i++;
+          success = true;
+          //  }
+      } else {
+          success = false;
+      }
+  }
+
+  double val;
+  for (int j = 0; j < length; j++) {
+    for (int k = 0; k < dim; k++) {
+      val = scale(points[j * dim + k], gmin[k], gmax[k], xmin, 0.8*half[k]);
+      *out << val << " ";
+    }
+    *out << label << endl;
+  }
+  delete[] points;
 }
 
 void draw_spiral(int num_spiral, double cx, double cy, int label, double cr, double a, double b, double c, int p, int q){
@@ -240,4 +361,33 @@ void draw_circle(int num_pts, double cx, double cy, double* half, int label, dou
 
 double scale(double value, double fromRangeMin, double fromRangeMax, double toRangeMin, double toRangeMax) {
   return ((value - fromRangeMin) * (toRangeMax - toRangeMin) / (fromRangeMax - fromRangeMin) + toRangeMin);
+}
+
+double Eucdist(double *a, double *b) {
+    double sum = 0.0;
+    for (int i = 0; i < dim; i++) {
+        sum += (a[i] - b[i])*(a[i] - b[i]);
+    }
+    return (sqrt(sum));
+}
+
+/* Generate a N(0,1) r.v. */
+double gaussian(long *idum) {
+    static int iset = 0;
+    static double gset;
+    double fac, r, v1, v2;
+    if (iset == 0) {
+        do {
+            v1 = 2.0 * RN - 1.0;
+            v2 = 2.0 * RN - 1.0;
+            r = v1 * v1 + v2*v2;
+        } while (r >= 1.0 || r == 0.0);
+        fac = sqrt(-2.0 * log(r) / r);
+        gset = v1*fac;
+        iset = 1;
+        return v2*fac;
+    } else {
+        iset = 0;
+        return gset;
+    }
 }

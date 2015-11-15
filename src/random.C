@@ -14,3 +14,13 @@ double ran0(long *idum) {
     *idum ^= MASK;
     return ans;
 }
+
+#undef IA
+#undef IM
+#undef AM
+#undef IQ
+#undef IR
+#undef MASK
+
+
+
