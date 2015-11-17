@@ -41,7 +41,7 @@ cat <<EOF > "/tmp/out"
 
 @ATTRIBUTE x REAL
 @ATTRIBUTE y REAL
-@ATTRIBUTE class {0,1}
+@ATTRIBUTE class {0,1,2,3,4,5,6}
 
 @DATA
 EOF
