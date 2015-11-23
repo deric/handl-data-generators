@@ -168,15 +168,16 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
   delete[] points;
 
   //3 circles inside each other
-  int c1 = (int) num_quad * 0.5;
-  int c2 = (int) num_quad * 0.3;
+  int num_circles = 2*num_quad - num_quad / 2;
+  int c1 = (int) num_circles * 0.5;
+  int c2 = (int) num_circles * 0.3;
   double cr = (half[0] - xmin) / 2;
   double cx = (half[0] - xmin) / 2;
   double cy = (half[1] - xmax) / 2;
 
   draw_circle(c1, cx, cy, half, 1, 0.8 * cr);
   draw_circle(c2, cx, cy, half, 2, 0.5 * cr);
-  draw_circle(num_quad - c1 - c2, cx, cy, half, 3, 0.2 * cr);
+  draw_circle(num_circles - c1 - c2, cx, cy, half, 3, 0.2 * cr);
 
   //spirals
   cx =  (half[0] + xmax) / 2;
@@ -194,7 +195,8 @@ void gen_data(int num_quad, int num_noise, double r, double gap) {
   cx =  (xmin + half[0]) / 2;
   cy = (xmin + half[1]) / 2;
  // draw_circle(num_quad, cx, cy, half, 6, cr);
-  draw_elly(num_quad, cx, cy, 6, cr, xmin, half);
+  //move half of poits to "circles cluster"
+  draw_elly(num_quad / 2, cx, cy, 6, cr, xmin, half);
 
   delete[] half;
 }
